@@ -4,7 +4,7 @@ export const commonUtils = {
   // 🟡 For Express middleware or route handlers
   routesAsyncHandler: (fn) => async (request, response, next) => {
     try {
-      await fn(request, response, next);
+      return await fn(request, response, next);
     } catch (error) {
       next(error);
     }
@@ -15,7 +15,7 @@ export const commonUtils = {
     (fn) =>
     async (...args) => {
       try {
-        await fn(...args);
+        return await fn(...args);
       } catch (error) {
         throw createError(500, error.message);
       }
