@@ -9,6 +9,7 @@
     "lint:js": "eslint \"./**/*.{js,jsx}\"",
     "format:code": "prettier --write \"./**/*.{js,jsx,html,yaml,env,md,json,txt}\"",
     "format:prisma": "npx prisma format",
+    "db:init": "npx prisma init --schema=src/prisma/schema.prisma",
     "db:migrate": "npx prisma migrate dev --schema=src/prisma/schema.prisma",
     "db:generate": "npx prisma generate --schema=src/prisma/schema.prisma",
     "db:studio": "npx prisma studio --schema=src/prisma/schema.prisma",
