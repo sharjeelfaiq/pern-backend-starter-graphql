@@ -8,9 +8,7 @@ const { write, read, update, remove } = repository;
 const { BACKEND_URL } = env;
 
 export const authServices = {
-  signUp: async (requestBody) => {
-    const { name, email, password, role } = requestBody;
-
+  signUp: async ({ name, email, password, role }) => {
     const existingEmail = await read.userByEmail(email);
 
     if (existingEmail) {
@@ -61,9 +59,7 @@ export const authServices = {
     };
   },
 
-  signIn: async (requestBody) => {
-    const { email, password } = requestBody;
-
+  signIn: async ({ email, password }) => {
     const user = await read.userByEmail(email);
 
     if (!user) {
@@ -123,33 +119,8 @@ export const authServices = {
     };
   },
 
-  signOut: async (requestHeaders) => {
-    const { authorization } = requestHeaders;
-
-    const accessToken = authorization ? authorization.replace("Bearer ", "") : "";
-
-    const existingBlacklistedToken = await read.blacklistedToken(accessToken);
-
-    if (existingBlacklistedToken) {
-      throw createError(400, "Token is already blacklisted.");
-    }
-
-    const decodedToken = tokenUtils.verify(accessToken);
-    const { id } = decodedToken;
-
-    const expiresAt = new Date(Date.now() + 60 * 60 * 1000).getTime(); // 1-hour expiration
-
-    const blacklistedTokenData = {
-      accessToken,
-      userId: id,
-      expiresAt,
-    };
-
-    const blacklistedToken = await write.blacklistedToken(blacklistedTokenData);
-
-    if (!blacklistedToken) {
-      throw createError(500, "An error occurred while blacklisting the accessToken.");
-    }
+  signOut: async ({ accessToken }) => {
+    tokenUtils.verify(accessToken);
 
     return {
       status: "success",
@@ -157,9 +128,7 @@ export const authServices = {
     };
   },
 
-  requestPasswordReset: async (requestBody) => {
-    const { email } = requestBody;
-
+  requestPasswordReset: async ({ email }) => {
     const existingUser = await read.userByEmail(email);
 
     if (!existingUser) {
@@ -188,9 +157,7 @@ export const authServices = {
     };
   },
 
-  updatePassword: async (requestBody) => {
-    const { password, resetToken } = requestBody;
-
+  updatePassword: async ({ password, resetToken }) => {
     const decodedToken = tokenUtils.verify(resetToken);
 
     const { id } = decodedToken;

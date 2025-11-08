@@ -7,14 +7,13 @@ export const authResolvers = {
   Query: {
     _empty: () => "This is a placeholder",
   },
+
   Mutation: {
     signUp: asyncHandler(async (_parent, { input }) => authServices.signUp(input)),
 
     signIn: asyncHandler(async (_parent, { input }) => authServices.signIn(input)),
 
-    signOut: asyncHandler(async (_parent, { accessToken }) =>
-      authServices.signOut({ authorization: `Bearer ${accessToken}` }),
-    ),
+    signOut: asyncHandler(async (_parent, { input }) => authServices.signOut(input)),
 
     requestPasswordReset: asyncHandler(async (_parent, { input }) =>
       authServices.requestPasswordReset(input),

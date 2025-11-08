@@ -6,31 +6,6 @@ export const authTypeDefs = gql`
     admin
   }
 
-  type User {
-    id: ID!
-    name: String!
-    email: String!
-    role: Role!
-    isEmailVerified: Boolean!
-  }
-
-  type AuthPayload {
-    status: String!
-    message: String!
-    data: UserToken
-  }
-
-  type UserToken {
-    id: ID!
-    role: Role!
-    accessToken: String!
-  }
-
-  type GenericResponse {
-    status: String!
-    message: String!
-  }
-
   input SignUpInput {
     name: String!
     email: String!
@@ -43,6 +18,10 @@ export const authTypeDefs = gql`
     password: String!
   }
 
+  input SignoutInput {
+    accessToken: String!
+  }
+
   input PasswordResetRequestInput {
     email: String!
   }
@@ -52,14 +31,31 @@ export const authTypeDefs = gql`
     resetToken: String!
   }
 
+  type TokenData {
+    id: ID!
+    role: Role!
+    accessToken: String!
+  }
+
+  type SigninResponse {
+    status: String!
+    message: String!
+    data: TokenData
+  }
+
+  type GenericResponse {
+    status: String!
+    message: String!
+  }
+
   type Query {
     _empty: String
   }
 
   type Mutation {
     signUp(input: SignUpInput!): GenericResponse!
-    signIn(input: SignInInput!): AuthPayload!
-    signOut(accessToken: String!): GenericResponse!
+    signIn(input: SignInInput!): SigninResponse!
+    signOut(input: SignoutInput!): GenericResponse!
     requestPasswordReset(input: PasswordResetRequestInput!): GenericResponse!
     updatePassword(input: PasswordUpdateInput!): GenericResponse!
   }

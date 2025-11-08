@@ -43,7 +43,7 @@ export const tokenUtils = {
     const decoded = jwt.verify(token, JWT_SECRET_KEY);
 
     if (!decoded || typeof decoded !== "object" || !("id" in decoded)) {
-      throw new Error("Invalid token format");
+      throw new Error("Invalid token");
     }
 
     return decoded;
