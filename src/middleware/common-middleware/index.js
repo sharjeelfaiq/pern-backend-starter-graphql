@@ -8,7 +8,6 @@ import { logTheme } from "./colors.js";
 import { corsOptions } from "./cors.js";
 import { apiRateLimiter } from "./rate-limiter.js";
 import { tokenUtils } from "#utils/token.utils.js";
-import { graphqlLogger } from "./request-logger.js";
 
 export const setupMiddleware = (app, apolloServer) => {
   app.use(helmet());
@@ -17,7 +16,6 @@ export const setupMiddleware = (app, apolloServer) => {
 
   app.use(
     "/graphql",
-    graphqlLogger,
     cors(corsOptions),
     express.json(),
     apiRateLimiter,
