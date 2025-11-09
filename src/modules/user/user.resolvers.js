@@ -1,5 +1,5 @@
-import { commonUtils } from "#utils/index.js";
 import { userServices } from "./user.services.js";
+import { verify, commonUtils } from "#utils/index.js";
 
 const { asyncHandler } = commonUtils;
 
@@ -11,8 +11,12 @@ export const userResolvers = {
   },
 
   Mutation: {
-    updateUserById: asyncHandler(async (_parent, { input }) => userServices.updateUserById(input)),
+    updateUserById: asyncHandler(
+      verify.accessToken(async (_parent, { input }) => userServices.updateUserById(input)),
+    ),
 
-    removeUserById: asyncHandler(async (_parent, { input }) => userServices.removeUserById(input)),
+    removeUserById: asyncHandler(
+      verify.accessToken(async (_parent, { input }) => userServices.removeUserById(input)),
+    ),
   },
 };
