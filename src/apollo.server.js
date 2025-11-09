@@ -1,11 +1,12 @@
 import { ApolloServer } from "@apollo/server";
+import depthLimit from "graphql-depth-limit";
 
 import { typeDefs, resolvers } from "#graphql/index.js";
 
+// Request/response logger plugin for Apollo
 const requestLoggerPlugin = {
   async requestDidStart(requestContext) {
     const { request } = requestContext;
-
     const operationName = request.operationName || "Unnamed";
     const query = request.query ? request.query.replace(/\s+/g, " ").trim() : "";
     const variables = request.variables || {};
@@ -23,8 +24,6 @@ const requestLoggerPlugin = {
     return {
       async willSendResponse({ response }) {
         const status = response.http?.status || "OK";
-
-        // Apollo v5: singleResult contains the actual payload
         const payload = response.body?.singleResult || response.body || {};
         console.group(`[GraphQL Response] ${operationName}: ${status}`);
         console.log("Response:", JSON.stringify(payload, null, 2));
@@ -34,10 +33,12 @@ const requestLoggerPlugin = {
   },
 };
 
+// Initialize Apollo Server
 export const apolloServer = new ApolloServer({
   typeDefs,
   resolvers,
-  plugins: [requestLoggerPlugin],
-  introspection: true,
+  introspection: process.env.NODE_ENV !== "production", // disable introspection in prod
   allowBatchedHttpRequests: true,
+  validationRules: [depthLimit(5)], // prevent very deep queries
+  plugins: [requestLoggerPlugin],
 });
