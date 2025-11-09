@@ -3,6 +3,7 @@ import helmet from "helmet";
 import express from "express";
 import compression from "compression";
 import { expressMiddleware } from "@as-integrations/express4";
+import xss from "xss-clean";
 
 import { logTheme } from "./colors.js";
 import { corsOptions } from "./cors.js";
@@ -17,8 +18,9 @@ export const setupMiddleware = (app, apolloServer) => {
   app.use(
     "/graphql",
     cors(corsOptions),
-    express.json(),
     apiRateLimiter,
+    express.json(),
+    xss(),
     expressMiddleware(apolloServer, {
       context: async ({ req, res }) => {
         const authHeader = req.headers.authorization;
