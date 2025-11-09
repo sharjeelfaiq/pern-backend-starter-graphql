@@ -13,6 +13,7 @@ const apolloServer = new ApolloServer({
   typeDefs,
   resolvers,
   introspection: true,
+  allowBatchedHttpRequests: true,
 });
 
 (async function main() {

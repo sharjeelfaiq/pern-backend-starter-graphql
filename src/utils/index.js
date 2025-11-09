@@ -4,3 +4,4 @@ export * from "./otp.utils.js";
 export * from "./password.utils.js";
 export * from "./token.utils.js";
 export * from "./validations.utils.js";
+export * from "./verify.js";
