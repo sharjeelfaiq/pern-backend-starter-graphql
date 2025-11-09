@@ -1,17 +1,19 @@
 import createError from "http-errors";
-import { user } from "#models/index.js";
+import { PrismaClient } from "@prisma/client";
+
 import { commonUtils } from "#utils/index.js";
 
 const { validateUuid } = commonUtils;
+const prisma = new PrismaClient();
 
 export const userRepository = {
   read: {
     users: async () => {
-      return await user.findMany();
+      return await prisma.user.findMany();
     },
 
     userByEmail: async (email) => {
-      return await user.findUnique({
+      return await prisma.user.findUnique({
         where: { email },
       });
     },
@@ -21,26 +23,22 @@ export const userRepository = {
         throw createError(400, "Invalid user ID format.");
       }
 
-      return await user.findUnique({
+      return await prisma.user.findUnique({
         where: { id },
       });
     },
   },
 
   write: {
-    user: async (data) => {
-      const { name, email, password, role } = data;
-
-      return await user.create({
+    user: async ({ name, email, password, role }) => {
+      return await prisma.user.create({
         data: { name, email, password, role },
       });
     },
   },
 
   update: {
-    userById: async (uData) => {
-      const { id, ...userData } = uData;
-
+    userById: async ({ id, ...data }) => {
       if (!validateUuid(id)) {
         throw createError(400, "Invalid user ID format.");
       }
@@ -49,9 +47,7 @@ export const userRepository = {
         throw createError(400, "No data provided for update.");
       }
 
-      const data = { ...userData };
-
-      return await user.update({
+      return await prisma.user.update({
         where: { id },
         data,
       });
@@ -64,7 +60,7 @@ export const userRepository = {
         throw createError(400, "Invalid user ID format.");
       }
 
-      return await user.delete({
+      return await prisma.user.delete({
         where: { id },
       });
     },

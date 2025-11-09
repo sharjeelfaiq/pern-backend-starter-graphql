@@ -1,9 +1,11 @@
-import { otp } from "#models/index.js";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 export const otpRepository = {
   read: {
     otp: async (id) => {
-      const records = await otp.findMany({
+      const records = await prisma.otp.findMany({
         where: { id },
         orderBy: { createdAt: "desc" },
         take: 1,
@@ -16,7 +18,7 @@ export const otpRepository = {
     otp: async (data) => {
       const { id, otpHash, expiresAt } = data;
 
-      return await otp.create({
+      return await prisma.otp.create({
         data: {
           id,
           otpHash,

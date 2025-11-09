@@ -15,9 +15,7 @@ export const userServices = {
     };
   },
 
-  getById: async (requestParams) => {
-    const { id } = requestParams;
-
+  getUserById: async ({ id }) => {
     const user = await read.userById(id);
 
     if (!user) {
@@ -31,15 +29,19 @@ export const userServices = {
     };
   },
 
-  updateById: async (requestParams, requestFiles, requestBody) => {
-    const { id } = requestParams;
-    const data = { ...requestBody, ...requestFiles };
-
+  updateUserById: async ({ id, name, email, password, role }) => {
     const existingUser = await read.userById(id);
 
     if (!existingUser) {
       throw createError(404, "User not found");
     }
+
+    const data = {
+      ...(name && { name }),
+      ...(email && { email }),
+      ...(role && { role }),
+      ...(password && { password: await passwordUtils.hash(password, { rounds: 12 }) }),
+    };
 
     const updatedUser = await update.userById(id, data);
 
@@ -54,9 +56,7 @@ export const userServices = {
     };
   },
 
-  deleteById: async (requestParams) => {
-    const { id } = requestParams;
-
+  removeUserById: async ({ id }) => {
     const user = await remove.userById(id);
 
     if (!user) {

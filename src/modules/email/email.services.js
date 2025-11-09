@@ -8,9 +8,7 @@ const { read, update, remove } = repository;
 const { FRONTEND_URL } = env;
 
 export const emailServices = {
-  checkVerificationToken: async (requestQuery) => {
-    const { verificationToken } = requestQuery;
-
+  checkVerificationToken: async ({ verificationToken }) => {
     if (!verificationToken || typeof verificationToken !== "string") {
       throw createError(400, "Verification token is required and must be a string");
     }
@@ -44,9 +42,7 @@ export const emailServices = {
     return sentEmail;
   },
 
-  sendVerificationToken: async (requestBody) => {
-    const { email } = requestBody;
-
+  sendVerificationToken: async ({ email }) => {
     const user = await read.userByEmail(email);
 
     if (!user) {

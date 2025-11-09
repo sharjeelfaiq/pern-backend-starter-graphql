@@ -6,12 +6,20 @@ export const emailTypeDefs = gql`
     message: String!
   }
 
+  input CheckVerificationTokenInput {
+    verificationToken: String!
+  }
+
+  input SendVerificationTokenInput {
+    email: String!
+  }
+
   type Query {
     _empty: String
   }
 
   type Mutation {
-    checkVerificationToken(verificationToken: String!): GenericResponse!
-    sendVerificationToken(email: String!): GenericResponse!
+    checkVerificationToken(input: CheckVerificationTokenInput!): GenericResponse!
+    sendVerificationToken(input: SendVerificationTokenInput!): GenericResponse!
   }
 `;
