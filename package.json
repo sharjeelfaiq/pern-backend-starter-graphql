@@ -53,12 +53,9 @@
     "#config/*": "./src/config/*",
     "#constants/*": "./src/constants/*",
     "#graphql/*": "./src/graphql/*",
-    "#repository/*": "./src/repository/*",
     "#middleware/*": "./src/middleware/*",
-    "#models/*": "./src/models/*",
     "#modules/*": "./src/modules/*",
-    "#routes/*": "./src/routes/*",
-    "#server/*": "./src/server/*",
+    "#repository/*": "./src/repository/*",
     "#utils/*": "./src/utils/*"
   }
 }
