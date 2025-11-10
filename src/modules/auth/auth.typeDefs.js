@@ -18,10 +18,6 @@ export const authTypeDefs = gql`
     password: String!
   }
 
-  input SignoutInput {
-    accessToken: String!
-  }
-
   input PasswordResetRequestInput {
     email: String!
   }
@@ -55,7 +51,6 @@ export const authTypeDefs = gql`
   type Mutation {
     signUp(input: SignUpInput!): GenericResponse!
     signIn(input: SignInInput!): SigninResponse!
-    signOut(input: SignoutInput!): GenericResponse!
     requestPasswordReset(input: PasswordResetRequestInput!): GenericResponse!
     updatePassword(input: PasswordUpdateInput!): GenericResponse!
   }

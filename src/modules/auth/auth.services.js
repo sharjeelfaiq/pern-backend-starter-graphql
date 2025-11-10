@@ -5,7 +5,7 @@ import { repository } from "#repository/index.js";
 import { env } from "#config/index.js";
 
 const { write, read, update, remove } = repository;
-const { BACKEND_URL } = env;
+const { FRONTEND_URL } = env;
 
 export const authServices = {
   signUp: async ({ name, email, password, role }) => {
@@ -38,14 +38,14 @@ export const authServices = {
       throw createError(500, "An error occurred while generating the token.");
     }
 
-    if (!BACKEND_URL) {
-      throw createError(500, "Backend URL is not defined.");
+    if (!FRONTEND_URL) {
+      throw createError(500, "FRONTEND_URL is not defined.");
     }
 
     const sentEmail = await sendEmail("verification-email", {
       email,
       subject: "Welcome - Verify your email",
-      BACKEND_URL,
+      FRONTEND_URL,
       verificationToken,
     });
 
@@ -66,11 +66,9 @@ export const authServices = {
       throw createError(401, "Invalid credentials.");
     }
 
-    const userId = user.id;
-
     if (!user.isEmailVerified) {
       // Generate new verification token
-      const verificationToken = tokenUtils.generate({ id: userId }, "verificationToken");
+      const verificationToken = tokenUtils.generate({ id: user.id }, "verificationToken");
 
       if (!verificationToken) {
         throw createError(500, "An error occurred while generating the token.");
@@ -79,7 +77,8 @@ export const authServices = {
       // Send verification email
       const sentEmail = await sendEmail("verification-email", {
         email,
-        subject: "Welcome - Verify your email",
+        subject: "Welcome - Please, verify your email",
+        FRONTEND_URL,
         verificationToken,
       });
 
@@ -100,31 +99,20 @@ export const authServices = {
       throw createError(401, "Invalid credentials.");
     }
 
-    const accessToken = tokenUtils.generate({ id: userId, role: user.role }, "accessToken");
+    const accessToken = tokenUtils.generate({ id: user.id, role: user.role }, "accessToken");
 
     if (!accessToken) {
       throw createError(500, "Token generation failed.");
     }
 
-    const data = {
-      id: userId,
-      role: user.role,
-      accessToken,
-    };
-
     return {
       status: "success",
       message: "Signed in successfully.",
-      data,
-    };
-  },
-
-  signOut: async ({ accessToken }) => {
-    tokenUtils.verify(accessToken);
-
-    return {
-      status: "success",
-      message: "Signed out successfully.",
+      data: {
+        id: user.id,
+        role: user.role,
+        accessToken,
+      },
     };
   },
 

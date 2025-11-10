@@ -52,7 +52,6 @@ const sendMail = async (mailOptions) => {
 // - resetToken
 // - verificationToken
 // - FRONTEND_URL
-// - BACKEND_URL
 // - subject
 // - rawOTP
 

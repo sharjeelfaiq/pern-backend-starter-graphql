@@ -13,8 +13,6 @@ export const authResolvers = {
 
     signIn: asyncHandler(async (_parent, { input }) => authServices.signIn(input)),
 
-    signOut: asyncHandler(async (_parent, { input }) => authServices.signOut(input)),
-
     requestPasswordReset: asyncHandler(async (_parent, { input }) =>
       authServices.requestPasswordReset(input),
     ),
