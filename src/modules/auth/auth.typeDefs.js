@@ -7,10 +7,12 @@ export const authTypeDefs = gql`
   }
 
   input SignUpInput {
-    name: String!
+    firstName: String!
+    lastName: String!
     email: String!
     password: String!
-    role: Role!
+    role: Role
+    isNewsletterSubscribed: Boolean
   }
 
   input SignInInput {

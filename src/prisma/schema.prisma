@@ -19,16 +19,17 @@ enum Role {
 }
 
 model User {
-  id              String   @id @default(uuid()) @db.Uuid
-  firstName       String
-  lastName        String
-  email           String   @unique
-  password        String
-  role            Role     @default(user)
-  isEmailVerified Boolean  @default(false)
-  otps            Otp[]    @relation("UserOtps")
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id                     String   @id @default(uuid()) @db.Uuid
+  firstName              String
+  lastName               String
+  email                  String   @unique
+  password               String
+  isEmailVerified        Boolean  @default(false)
+  isNewsletterSubscribed Boolean  @default(false)
+  otps                   Otp[]    @relation(name: "UserOtps")
+  role                   Role     @default(user)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
 }
 
 model Otp {
@@ -36,9 +37,9 @@ model Otp {
   otpHash   String
   userId    String   @db.Uuid
   user      User     @relation(fields: [userId], references: [id], name: "UserOtps", onDelete: Cascade)
-  expiresAt DateTime
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  expiresAt DateTime
 }
 
 model Category {

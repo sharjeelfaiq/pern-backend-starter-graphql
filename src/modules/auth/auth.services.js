@@ -8,7 +8,7 @@ const { write, read, update, remove } = repository;
 const { FRONTEND_URL } = env;
 
 export const authServices = {
-  signUp: async ({ name, email, password, role }) => {
+  signUp: async ({ firstName, lastName, email, password, role, isNewsletterSubscribed }) => {
     const existingEmail = await read.userByEmail(email);
 
     if (existingEmail) {
@@ -18,10 +18,12 @@ export const authServices = {
     const hashedPassword = await passwordUtils.hash(password, { rounds: 12 });
 
     const registrationData = {
-      name,
+      firstName,
+      lastName,
       email,
       password: hashedPassword,
       role,
+      isNewsletterSubscribed,
     };
 
     const newUser = await write.user(registrationData);
