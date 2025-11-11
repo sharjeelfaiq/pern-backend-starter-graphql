@@ -55,12 +55,10 @@ export const authServices = {
     if (!user) throw createError(401, "Invalid credentials.");
 
     if (!user.isEmailVerified) {
-      // Generate new verification token
       const verificationToken = tokenUtils.generate({ id: user.id }, "verificationToken");
 
       if (!verificationToken) throw createError(500, "Verification token generation failed.");
 
-      // Send verification email
       const sentEmail = await sendEmail("verification-email", {
         email,
         subject: "Welcome - Please, verify your email",

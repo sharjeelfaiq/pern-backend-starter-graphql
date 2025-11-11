@@ -29,7 +29,7 @@
         To complete your registration, please verify your email address:
       </p>
       <a
-        href="${FRONTEND_URL}/verify-email?verificationToken=${verificationToken}"
+        href="${FRONTEND_URL}/verify-email?verificationToken=${verificationToken}&email=${email}"
         style="
           display: inline-block;
           background-color: #4a90e2;
@@ -48,7 +48,7 @@
         browser:
       </p>
       <p style="font-size: 15px; line-height: 1.6; margin-bottom: 16px; color: #555">
-        ${FRONTEND_URL}/api/v1/email/check-verification-token?verificationToken=${verificationToken}
+        ${FRONTEND_URL}/api/v1/email/check-verification-token?verificationToken=${verificationToken}&email=${email}
       </p>
       <p style="font-size: 15px; line-height: 1.6; margin-bottom: 16px; color: #555">
         If you did not sign up, you can safely ignore this email.

@@ -8,8 +8,8 @@ datasource db {
 }
 
 enum Role {
-  user
-  admin
+  USER
+  ADMIN
 }
 
 model User {
@@ -21,7 +21,7 @@ model User {
   isEmailVerified        Boolean  @default(false)
   isNewsletterSubscribed Boolean  @default(false)
   otps                   Otp[]    @relation(name: "UserOtps")
-  role                   Role     @default(user)
+  role                   Role     @default(USER)
   reviews                Review[]
   createdAt              DateTime @default(now())
   updatedAt              DateTime @updatedAt

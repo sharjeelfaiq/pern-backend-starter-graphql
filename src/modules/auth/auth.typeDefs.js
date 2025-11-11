@@ -1,9 +1,9 @@
 import { gql } from "graphql-tag";
 
 export const authTypeDefs = gql`
-  enum Role {
-    user
-    admin
+  enum ROLE {
+    USER
+    ADMIN
   }
 
   input SignUpInput {
@@ -11,7 +11,7 @@ export const authTypeDefs = gql`
     lastName: String!
     email: String!
     password: String!
-    role: Role
+    role: ROLE
     isNewsletterSubscribed: Boolean
   }
 

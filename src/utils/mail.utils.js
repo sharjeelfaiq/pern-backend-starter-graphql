@@ -7,7 +7,6 @@ import { VIEWS_DIRECTORY } from "#constants/index.js";
 
 const { USER_EMAIL } = env;
 
-// Template cache for better performance
 const templateCache = new Map();
 
 const getEmailTemplate = async (folder, filename) => {
@@ -47,37 +46,20 @@ const sendMail = async (mailOptions) => {
   }
 };
 
-// options object should contain the following properties:
-// - email
-// - resetToken
-// - verificationToken
-// - FRONTEND_URL
-// - subject
-// - rawOTP
-
 export const sendEmail = async (type, options) => {
   const { email, subject, ...rest } = options;
   const template = await getEmailTemplate(type, "index.html");
-  const html = processTemplate(template, rest);
+  const html = processTemplate(template, { ...rest, email });
 
-  const supportedTypes = [
-    "otp-email",
-    "verification-email",
-    "verification-notification",
-    "reset-password",
-  ];
+  const supportedTypes = ["otp-email", "verification-email", "reset-password"];
 
   if (!supportedTypes.includes(type)) {
     throw createError(400, "Invalid email type.");
   }
 
-  if (type === "verification-notification") {
-    return html;
-  } else {
-    return sendMail({
-      to: email,
-      subject,
-      html,
-    });
-  }
+  return sendMail({
+    to: email,
+    subject,
+    html,
+  });
 };

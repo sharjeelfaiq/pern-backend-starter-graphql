@@ -2,10 +2,8 @@ import createError from "http-errors";
 
 import { tokenUtils, sendEmail } from "#utils/index.js";
 import { repository } from "#repository/index.js";
-import { env } from "#config/index.js";
 
 const { read, update } = repository;
-const { FRONTEND_URL } = env;
 
 export const emailServices = {
   checkVerificationToken: async ({ verificationToken }) => {
@@ -22,15 +20,10 @@ export const emailServices = {
 
     if (!isUserUpdated) throw createError(500, "Email verification failed.");
 
-    if (!FRONTEND_URL) throw createError(500, "Frontend URL is not defined.");
-
-    const sentEmail = await sendEmail("verification-notification", {
-      FRONTEND_URL,
-    });
-
-    if (!sentEmail) throw createError(500, "Send the verification email failed.");
-
-    return sentEmail;
+    return {
+      status: "success",
+      message: "Email verified successfully",
+    };
   },
 
   sendVerificationToken: async ({ email }) => {
