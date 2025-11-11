@@ -58,6 +58,8 @@ model Category {
   subCategories     SubCategory[] @relation("CategorySubCategories")
   createdAt         DateTime      @default(now())
   updatedAt         DateTime      @updatedAt
+
+  @@index([name])
 }
 
 model SubCategory {
@@ -77,6 +79,8 @@ model SubCategory {
   products          Product[] @relation("SubCategoryProducts")
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
+
+  @@index([categoryId])
 }
 
 model Product {
@@ -114,6 +118,11 @@ model Product {
   reviews              Review[]    @relation(name: "ProductReviews")
   createdAt            DateTime    @default(now())
   updatedAt            DateTime    @updatedAt
+
+  @@index([name])
+  @@index([categoryId])
+  @@index([subCategoryId])
+  @@index([price])
 }
 
 model Review {
