@@ -20,7 +20,7 @@ const createTransporter = () => {
     if (error) {
       logger.error(`[connection_failed] Mail (error: ${error.message})`.error);
     } else {
-      logger.info(`[connected] Mail (host: ${EMAIL_HOST}, port: ${EMAIL_PORT})`.service);
+      logger.info(`[connected] Nodemailer (host: ${EMAIL_HOST}, port: ${EMAIL_PORT})`.service);
     }
   });
 

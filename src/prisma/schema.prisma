@@ -33,11 +33,95 @@ model User {
 
 model Otp {
   id        String   @id @default(uuid()) @db.Uuid
-  email     String
+  otpHash   String
   userId    String   @db.Uuid
   user      User     @relation(fields: [userId], references: [id], name: "UserOtps", onDelete: Cascade)
-  otpHash   String
   expiresAt DateTime
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Category {
+  id                String        @id @default(uuid()) @db.Uuid
+  name              String        @unique
+  description       String?
+  shortDescription  String?
+  customUrl         String?
+  metaTitle         String?
+  metaDescription   String?
+  canonicalTag      String?
+  thumbnailUrl      String?
+  thumbnailPublicId String?
+  thumbnailText     String?
+  products          Product[]     @relation("CategoryProducts")
+  subCategories     SubCategory[] @relation("CategorySubCategories")
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+}
+
+model SubCategory {
+  id                String    @id @default(uuid()) @db.Uuid
+  name              String    @unique
+  description       String?
+  shortDescription  String?
+  customUrl         String?
+  metaTitle         String?
+  metaDescription   String?
+  canonicalTag      String?
+  thumbnailUrl      String?
+  thumbnailPublicId String?
+  thumbnailText     String?
+  categoryId        String    @db.Uuid
+  category          Category  @relation(fields: [categoryId], references: [id], name: "CategorySubCategories", onDelete: Cascade)
+  products          Product[] @relation("SubCategoryProducts")
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model Product {
+  id                   String      @id @default(uuid()) @db.Uuid
+  name                 String      @unique
+  price                Int
+  description          String
+  stock                Int
+  discountPrice        Int?
+  thumbnailUrl         String
+  thumbnailPublicId    String
+  productImages        Json[]
+  colors               Json[]      @default([])
+  specifications       Json[]      @default([])
+  sale                 String?     @default("0")
+  saleDuration         DateTime    @default(now())
+  canonicalTag         String?
+  metaDescription      String?
+  metaTitle            String?
+  ogImage              String?
+  ogUrl                String?
+  ogTitle              String?
+  thumbnailAltText     String?
+  productImagesAltText String?
+  sections             Json[]      @default([])
+  saleCounter          String?
+  sizes                Json[]      @default([])
+  filter               Json[]      @default([])
+  customUrl            String?
+  shippingOptions      Json[]      @default([])
+  categoryId           String      @db.Uuid
+  subCategoryId        String      @db.Uuid
+  category             Category    @relation(fields: [categoryId], references: [id], name: "CategoryProducts", onDelete: Cascade)
+  subCategory          SubCategory @relation(fields: [subCategoryId], references: [id], name: "SubCategoryProducts", onDelete: Cascade)
+  reviews              Review[]    @relation(name: "ProductReviews")
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
+}
+
+model Review {
+  id        String   @id @default(uuid()) @db.Uuid
+  userName  String
+  userEmail String
+  review    String
+  stars     Int
+  productId String   @db.Uuid
+  product   Product  @relation(fields: [productId], references: [id], name: "ProductReviews", onDelete: Cascade)
+  createdAt DateTime @default(now())
 }
