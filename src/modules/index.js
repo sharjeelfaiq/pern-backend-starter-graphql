@@ -6,6 +6,7 @@ import { authTypeDefs, authResolvers } from "./auth/index.js";
 import { emailTypeDefs, emailResolvers } from "./email/index.js";
 import { categoryTypeDefs, categoryResolvers } from "./category/index.js";
 import { subCategoryTypeDefs, subCategoryResolvers } from "./subCategory/index.js";
+import { productTypeDefs, productResolvers } from "./product/index.js";
 
 export const typeDefs = mergeTypeDefs([
   authTypeDefs,
@@ -14,6 +15,7 @@ export const typeDefs = mergeTypeDefs([
   emailTypeDefs,
   otpTypeDefs,
   userTypeDefs,
+  productTypeDefs,
 ]);
 
 export const resolvers = mergeResolvers([
@@ -23,4 +25,5 @@ export const resolvers = mergeResolvers([
   emailResolvers,
   otpResolvers,
   userResolvers,
+  productResolvers,
 ]);
