@@ -30,9 +30,9 @@ export const userRepository = {
   },
 
   write: {
-    user: async ({ name, email, password, role }) => {
+    user: async ({ firstName, lastName, email, password, role, isNewsletterSubscribed }) => {
       return await prisma.user.create({
-        data: { name, email, password, role },
+        data: { firstName, lastName, email, password, role, isNewsletterSubscribed },
       });
     },
   },
@@ -43,7 +43,7 @@ export const userRepository = {
         throw createError(400, "Invalid user ID format.");
       }
 
-      if (Object.keys(userData).length === 0) {
+      if (Object.keys(data).length === 0) {
         throw createError(400, "No data provided for update.");
       }
 

@@ -6,11 +6,14 @@ export const userTypeDefs = gql`
   }
 
   input UpdateUserByIdInput {
-    id: String!
-    name: String
+    id: ID!
+    firstName: String
+    lastName: String
     email: String
     password: String
     role: String
+    createdAt: String!
+    updatedAt: String!
   }
 
   input RemoveUserByIdInput {
@@ -19,7 +22,8 @@ export const userTypeDefs = gql`
 
   type User {
     id: ID!
-    name: String!
+    firstName: String
+    lastName: String
     email: String!
     role: String!
     isEmailVerified: Boolean!
@@ -36,7 +40,7 @@ export const userTypeDefs = gql`
   type UserResponse {
     status: String!
     message: String!
-    data: User
+    data: User!
   }
 
   type GenericResponse {
