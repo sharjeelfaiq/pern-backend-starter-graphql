@@ -1,4 +1,23 @@
-export * from "./auth/index.js";
-export * from "./email/index.js";
-export * from "./otp/index.js";
-export * from "./user/index.js";
+import { mergeResolvers, mergeTypeDefs } from "@graphql-tools/merge";
+
+import { otpTypeDefs, otpResolvers } from "./otp/index.js";
+import { userTypeDefs, userResolvers } from "./user/index.js";
+import { authTypeDefs, authResolvers } from "./auth/index.js";
+import { emailTypeDefs, emailResolvers } from "./email/index.js";
+import { categoryTypeDefs, categoryResolvers } from "./category/index.js";
+
+export const typeDefs = mergeTypeDefs([
+  authTypeDefs,
+  categoryTypeDefs,
+  emailTypeDefs,
+  otpTypeDefs,
+  userTypeDefs,
+]);
+
+export const resolvers = mergeResolvers([
+  authResolvers,
+  categoryResolvers,
+  emailResolvers,
+  otpResolvers,
+  userResolvers,
+]);

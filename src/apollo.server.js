@@ -1,7 +1,7 @@
 import { ApolloServer } from "@apollo/server";
 import depthLimit from "graphql-depth-limit";
 
-import { typeDefs, resolvers } from "#graphql/index.js";
+import { typeDefs, resolvers } from "#modules/index.js";
 
 // Request/response logger plugin for Apollo
 const requestLoggerPlugin = {
