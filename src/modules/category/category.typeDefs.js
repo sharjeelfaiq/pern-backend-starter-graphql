@@ -3,6 +3,15 @@ import { gql } from "graphql-tag";
 export const categoryTypeDefs = gql`
   input CreateCategoryInput {
     name: String!
+    description: String
+    shortDescription: String
+    customUrl: String
+    metaTitle: String
+    metaDescription: String
+    canonicalTag: String
+    thumbnailUrl: String
+    thumbnailPublicId: String
+    thumbnailText: String
   }
 
   input GetCategoryByIdInput {
