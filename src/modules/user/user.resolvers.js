@@ -1,7 +1,8 @@
 import { userServices } from "./user.services.js";
-import { verify, commonUtils } from "#utils/index.js";
+import { verifications, commonUtils } from "#utils/index.js";
 
 const { asyncHandler } = commonUtils;
+const { verifyAccessToken } = verifications;
 
 export const userResolvers = {
   Query: {
@@ -12,11 +13,11 @@ export const userResolvers = {
 
   Mutation: {
     updateUserById: asyncHandler(
-      verify.accessToken(async (_parent, { input }) => userServices.updateUserById(input)),
+      verifyAccessToken(async (_parent, { input }) => userServices.updateUserById(input)),
     ),
 
     removeUserById: asyncHandler(
-      verify.accessToken(async (_parent, { input }) => userServices.removeUserById(input)),
+      verifyAccessToken(async (_parent, { input }) => userServices.removeUserById(input)),
     ),
   },
 };

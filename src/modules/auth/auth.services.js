@@ -4,7 +4,7 @@ import { tokenUtils, sendEmail, passwordUtils } from "#utils/index.js";
 import { repository } from "#repository/index.js";
 import { env } from "#config/index.js";
 
-const { write, read, update, remove } = repository;
+const { write, read, update } = repository;
 const { FRONTEND_URL } = env;
 
 export const authServices = {
@@ -28,21 +28,11 @@ export const authServices = {
 
     const newUser = await write.user(registrationData);
 
-    if (!newUser) {
-      remove.user(newUser.id);
-
-      throw createError(500, "Failed to create a new user.");
-    }
-
     const verificationToken = tokenUtils.generate({ id: newUser.id }, "verificationToken");
 
-    if (!verificationToken) {
-      throw createError(500, "An error occurred while generating the token.");
-    }
+    if (!verificationToken) throw createError(500, "Verification token generation failed.");
 
-    if (!FRONTEND_URL) {
-      throw createError(500, "FRONTEND_URL is not defined.");
-    }
+    if (!FRONTEND_URL) throw createError(500, "FRONTEND_URL is not defined.");
 
     const sentEmail = await sendEmail("verification-email", {
       email,
@@ -51,9 +41,7 @@ export const authServices = {
       verificationToken,
     });
 
-    if (!sentEmail) {
-      throw createError(500, "Failed to send the welcome email.");
-    }
+    if (!sentEmail) throw createError(500, "Send the welcome email failed.");
 
     return {
       status: "success",
@@ -64,17 +52,13 @@ export const authServices = {
   signIn: async ({ email, password }) => {
     const user = await read.userByEmail(email);
 
-    if (!user) {
-      throw createError(401, "Invalid credentials.");
-    }
+    if (!user) throw createError(401, "Invalid credentials.");
 
     if (!user.isEmailVerified) {
       // Generate new verification token
       const verificationToken = tokenUtils.generate({ id: user.id }, "verificationToken");
 
-      if (!verificationToken) {
-        throw createError(500, "An error occurred while generating the token.");
-      }
+      if (!verificationToken) throw createError(500, "Verification token generation failed.");
 
       // Send verification email
       const sentEmail = await sendEmail("verification-email", {
@@ -84,9 +68,7 @@ export const authServices = {
         verificationToken,
       });
 
-      if (!sentEmail) {
-        throw createError(500, "Failed to send the verification email.");
-      }
+      if (!sentEmail) throw createError(500, "Send verification email failed.");
 
       // Then throw error informing the user
       throw createError(
@@ -97,15 +79,11 @@ export const authServices = {
 
     const isPasswordValid = await passwordUtils.compare(password, user.password);
 
-    if (!isPasswordValid) {
-      throw createError(401, "Invalid credentials.");
-    }
+    if (!isPasswordValid) throw createError(401, "Invalid credentials.");
 
     const accessToken = tokenUtils.generate({ id: user.id, role: user.role }, "accessToken");
 
-    if (!accessToken) {
-      throw createError(500, "Token generation failed.");
-    }
+    if (!accessToken) throw createError(500, "Token generation failed.");
 
     return {
       status: "success",
@@ -121,15 +99,11 @@ export const authServices = {
   requestPasswordReset: async ({ email }) => {
     const existingUser = await read.userByEmail(email);
 
-    if (!existingUser) {
-      throw createError(404, "User not found");
-    }
+    if (!existingUser) throw createError(404, "User not found.");
 
     const resetToken = tokenUtils.generate({ id: existingUser.id }, "passwordResetToken");
 
-    if (!resetToken) {
-      throw createError(500, "Failed to generate reset token");
-    }
+    if (!resetToken) throw createError(500, "Reset token generation failed.");
 
     const sentEmail = await sendEmail("reset-password", {
       email,
@@ -137,9 +111,7 @@ export const authServices = {
       resetToken,
     });
 
-    if (!sentEmail) {
-      throw createError(500, "Failed to send reset password email");
-    }
+    if (!sentEmail) throw createError(500, "Send reset password email failed.");
 
     return {
       status: "success",
@@ -154,9 +126,7 @@ export const authServices = {
 
     const existingUser = await read.userById(id);
 
-    if (!existingUser) {
-      throw createError(404, "User not found");
-    }
+    if (!existingUser) throw createError(404, "User not found.");
 
     const hashedPassword = await passwordUtils.hash(password, { rounds: 12 });
 
@@ -164,9 +134,7 @@ export const authServices = {
       password: hashedPassword,
     });
 
-    if (!isPasswordUpdated) {
-      throw createError(500, "Password update failed");
-    }
+    if (!isPasswordUpdated) throw createError(500, "Password update failed.");
 
     return {
       status: "success",

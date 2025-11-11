@@ -18,9 +18,7 @@ export const userServices = {
   getUserById: async ({ id }) => {
     const user = await read.userById(id);
 
-    if (!user) {
-      throw createError(404, "User not found");
-    }
+    if (!user) throw createError(404, "User not found.");
 
     return {
       status: "success",
@@ -29,25 +27,17 @@ export const userServices = {
     };
   },
 
-  updateUserById: async ({ id, name, email, password, role }) => {
+  updateUserById: async ({ id, password, ...data }) => {
     const existingUser = await read.userById(id);
 
-    if (!existingUser) {
-      throw createError(404, "User not found");
-    }
+    if (!existingUser) throw createError(404, "User not found.");
 
-    const data = {
-      ...(name && { name }),
-      ...(email && { email }),
-      ...(role && { role }),
+    const updateData = {
+      ...data,
       ...(password && { password: await passwordUtils.hash(password, { rounds: 12 }) }),
     };
 
-    const updatedUser = await update.userById(id, data);
-
-    if (!updatedUser) {
-      throw createError(500, "User update failed");
-    }
+    const updatedUser = await update.userById({ id, ...updateData });
 
     return {
       status: "success",
@@ -57,11 +47,7 @@ export const userServices = {
   },
 
   removeUserById: async ({ id }) => {
-    const user = await remove.userById(id);
-
-    if (!user) {
-      throw createError(404, "User not found");
-    }
+    await remove.userById(id);
 
     return {
       status: "success",

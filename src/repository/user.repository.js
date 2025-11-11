@@ -8,44 +8,54 @@ const prisma = new PrismaClient();
 
 export const userRepository = {
   read: {
-    users: async () => {
-      return await prisma.user.findMany();
-    },
-
-    userByEmail: async (email) => {
-      return await prisma.user.findUnique({
-        where: { email },
-      });
-    },
+    users: async () =>
+      prisma.user.findMany({
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          role: true,
+          isEmailVerified: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      }),
 
     userById: async (id) => {
-      if (!validateUuid(id)) {
-        throw createError(400, "Invalid user ID format.");
-      }
-
-      return await prisma.user.findUnique({
+      if (!validateUuid(id)) throw createError(400, "Invalid user ID format.");
+      return prisma.user.findUnique({
         where: { id },
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          role: true,
+          isEmailVerified: true,
+          createdAt: true,
+          updatedAt: true,
+        },
       });
     },
+
+    userByEmail: async (email) =>
+      prisma.user.findUnique({
+        where: { email },
+      }),
   },
 
   write: {
-    user: async ({ firstName, lastName, email, password, role, isNewsletterSubscribed }) => {
-      return await prisma.user.create({
-        data: { firstName, lastName, email, password, role, isNewsletterSubscribed },
-      });
-    },
+    user: async (data) =>
+      await prisma.user.create({
+        data,
+      }),
   },
 
   update: {
     userById: async ({ id, ...data }) => {
-      if (!validateUuid(id)) {
-        throw createError(400, "Invalid user ID format.");
-      }
-
-      if (Object.keys(data).length === 0) {
-        throw createError(400, "No data provided for update.");
-      }
+      if (!validateUuid(id)) throw createError(400, "Invalid user ID format.");
+      if (!Object.keys(data).length) throw createError(400, "No data provided for update");
 
       return await prisma.user.update({
         where: { id },
@@ -56,9 +66,7 @@ export const userRepository = {
 
   remove: {
     userById: async (id) => {
-      if (!validateUuid(id)) {
-        throw createError(400, "Invalid user ID format.");
-      }
+      if (!validateUuid(id)) throw createError(400, "Invalid user ID format.");
 
       return await prisma.user.delete({
         where: { id },

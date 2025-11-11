@@ -10,9 +10,7 @@ export const otpServices = {
   sendOtp: async ({ email }) => {
     const existingUser = await read.userByEmail(email);
 
-    if (!existingUser) {
-      throw createError(404, "User not found.");
-    }
+    if (!existingUser) throw createError(404, "User not found.");
 
     const { rawOTP, hashedOTP, expiresAt } = await generateOTP();
 
@@ -24,11 +22,7 @@ export const otpServices = {
 
     const isOTPSaved = await write.otp(otpData);
 
-    if (!isOTPSaved) {
-      remove.otp(existingUser.id);
-
-      throw createError(500, "Failed to save OTP.");
-    }
+    if (!isOTPSaved) throw createError(500, "Saving OTP failed.");
 
     const sentEmail = await sendEmail("otp-email", {
       email,
@@ -36,9 +30,7 @@ export const otpServices = {
       rawOTP,
     });
 
-    if (!sentEmail) {
-      throw createError(500, "Failed to send email.");
-    }
+    if (!sentEmail) throw createError(500, "Sending email failed.");
 
     return {
       status: "success",
@@ -49,15 +41,11 @@ export const otpServices = {
   verifyOtp: async ({ email, otp }) => {
     const existingUser = await read.userByEmail(email);
 
-    if (!existingUser) {
-      throw createError(404, "User not found.");
-    }
+    if (!existingUser) throw createError(404, "User not found.");
 
     const existingOTPs = await read.otp(existingUser.id.toString());
 
-    if (!existingOTPs || !existingOTPs.length) {
-      throw createError(400, "Invalid OTP");
-    }
+    if (!existingOTPs || !existingOTPs.length) throw createError(400, "Invalid OTP");
 
     const comparisonResults = await Promise.all(
       existingOTPs.map((existingOTP) => bcrypt.compare(otp, existingOTP.otpHash)),
@@ -65,9 +53,7 @@ export const otpServices = {
 
     const isOTPValid = comparisonResults.some((result) => result === true);
 
-    if (!isOTPValid) {
-      throw createError(400, "Invalid OTP");
-    }
+    if (!isOTPValid) throw createError(400, "Invalid OTP.");
 
     return {
       status: "success",
