@@ -1,8 +1,9 @@
 import { gql } from "graphql-tag";
 
-export const categoryTypeDefs = gql`
-  input CreateCategoryInput {
+export const subCategoryTypeDefs = gql`
+  input CreateSubCategoryInput {
     name: String!
+    categoryId: String!
     description: String
     shortDescription: String
     customUrl: String
@@ -14,11 +15,11 @@ export const categoryTypeDefs = gql`
     thumbnailText: String
   }
 
-  input GetCategoryByIdInput {
+  input GetSubCategoryByIdInput {
     id: String!
   }
 
-  input UpdateCategoryByIdInput {
+  input UpdateSubCategoryByIdInput {
     id: String!
     name: String
     description: String
@@ -32,13 +33,14 @@ export const categoryTypeDefs = gql`
     thumbnailText: String
   }
 
-  input RemoveCategoryByIdInput {
+  input RemoveSubCategoryByIdInput {
     id: String!
   }
 
-  type Category {
+  type SubCategory {
     id: ID!
     name: String!
+    categoryId: String!
     description: String
     shortDescription: String
     customUrl: String
@@ -52,16 +54,16 @@ export const categoryTypeDefs = gql`
     updatedAt: String!
   }
 
-  type CategoriesResponse {
+  type SubCategoriesResponse {
     status: String!
     message: String!
-    data: [Category!]!
+    data: [SubCategory!]!
   }
 
-  type CategoryResponse {
+  type SubCategoryResponse {
     status: String!
     message: String!
-    data: Category!
+    data: SubCategory!
   }
 
   type GenericResponse {
@@ -70,13 +72,13 @@ export const categoryTypeDefs = gql`
   }
 
   type Query {
-    getCategories: CategoriesResponse!
-    getCategoryById(input: GetCategoryByIdInput!): CategoryResponse!
+    getSubCategories: SubCategoriesResponse!
+    getSubCategoryById(input: GetSubCategoryByIdInput!): SubCategoryResponse!
   }
 
   type Mutation {
-    createCategory(input: CreateCategoryInput!): CategoryResponse!
-    updateCategoryById(input: UpdateCategoryByIdInput!): CategoryResponse!
-    removeCategoryById(input: RemoveCategoryByIdInput!): GenericResponse!
+    createSubCategory(input: CreateSubCategoryInput!): SubCategoryResponse!
+    updateSubCategoryById(input: UpdateSubCategoryByIdInput!): SubCategoryResponse!
+    removeSubCategoryById(input: RemoveSubCategoryByIdInput!): GenericResponse!
   }
 `;
