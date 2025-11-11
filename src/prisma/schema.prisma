@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -20,40 +14,45 @@ enum Role {
 
 model User {
   id                     String   @id @default(uuid()) @db.Uuid
-  firstName              String
-  lastName               String
-  email                  String   @unique
-  password               String
+  firstName              String   @db.VarChar(100)
+  lastName               String   @db.VarChar(100)
+  email                  String   @unique @db.VarChar(255)
+  password               String   @db.VarChar(255)
   isEmailVerified        Boolean  @default(false)
   isNewsletterSubscribed Boolean  @default(false)
   otps                   Otp[]    @relation(name: "UserOtps")
   role                   Role     @default(user)
+  reviews                Review[]
   createdAt              DateTime @default(now())
   updatedAt              DateTime @updatedAt
+
+  @@index([email])
 }
 
 model Otp {
   id        String   @id @default(uuid()) @db.Uuid
-  otpHash   String
+  otpHash   String   @db.Text()
   userId    String   @db.Uuid
   user      User     @relation(fields: [userId], references: [id], name: "UserOtps", onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   expiresAt DateTime
+
+  @@index([userId])
 }
 
 model Category {
   id                String        @id @default(uuid()) @db.Uuid
-  name              String        @unique
-  description       String?
-  shortDescription  String?
-  customUrl         String?
-  metaTitle         String?
-  metaDescription   String?
-  canonicalTag      String?
-  thumbnailUrl      String?
-  thumbnailPublicId String?
-  thumbnailText     String?
+  name              String        @unique @db.VarChar(100)
+  description       String?       @db.Text()
+  shortDescription  String?       @db.VarChar(255)
+  customUrl         String?       @unique @db.VarChar(255)
+  metaTitle         String?       @db.VarChar(70)
+  metaDescription   String?       @db.VarChar(160)
+  canonicalTag      String?       @db.VarChar(255)
+  thumbnailUrl      String?       @db.VarChar(512)
+  thumbnailPublicId String?       @db.VarChar(255)
+  thumbnailText     String?       @db.VarChar(255)
   products          Product[]     @relation("CategoryProducts")
   subCategories     SubCategory[] @relation("CategorySubCategories")
   createdAt         DateTime      @default(now())
@@ -64,16 +63,16 @@ model Category {
 
 model SubCategory {
   id                String    @id @default(uuid()) @db.Uuid
-  name              String    @unique
-  description       String?
-  shortDescription  String?
-  customUrl         String?
-  metaTitle         String?
-  metaDescription   String?
-  canonicalTag      String?
-  thumbnailUrl      String?
-  thumbnailPublicId String?
-  thumbnailText     String?
+  name              String    @unique @db.VarChar(100)
+  description       String?   @db.Text()
+  shortDescription  String?   @db.VarChar(255)
+  customUrl         String?   @unique @db.VarChar(255)
+  metaTitle         String?   @db.VarChar(70)
+  metaDescription   String?   @db.VarChar(160)
+  canonicalTag      String?   @db.VarChar(255)
+  thumbnailUrl      String?   @db.VarChar(512)
+  thumbnailPublicId String?   @db.VarChar(255)
+  thumbnailText     String?   @db.VarChar(255)
   categoryId        String    @db.Uuid
   category          Category  @relation(fields: [categoryId], references: [id], name: "CategorySubCategories", onDelete: Cascade)
   products          Product[] @relation("SubCategoryProducts")
@@ -85,31 +84,31 @@ model SubCategory {
 
 model Product {
   id                   String      @id @default(uuid()) @db.Uuid
-  name                 String      @unique
-  price                Int
-  description          String
-  stock                Int
+  name                 String      @unique @db.VarChar(255)
+  price                Int         @default(0)
+  description          String      @db.Text()
+  stock                Int         @default(0)
   discountPrice        Int?
-  thumbnailUrl         String
-  thumbnailPublicId    String
-  productImages        Json[]
+  thumbnailUrl         String      @db.VarChar(512)
+  thumbnailPublicId    String      @db.VarChar(255)
+  productImages        Json[]      @default([])
   colors               Json[]      @default([])
   specifications       Json[]      @default([])
   sale                 String?     @default("0")
-  saleDuration         DateTime    @default(now())
-  canonicalTag         String?
-  metaDescription      String?
-  metaTitle            String?
-  ogImage              String?
-  ogUrl                String?
-  ogTitle              String?
-  thumbnailAltText     String?
-  productImagesAltText String?
+  saleDuration         DateTime?
+  canonicalTag         String?     @db.VarChar(255)
+  metaDescription      String?     @db.VarChar(160)
+  metaTitle            String?     @db.VarChar(70)
+  ogImage              String?     @db.VarChar(512)
+  ogUrl                String?     @db.VarChar(512)
+  ogTitle              String?     @db.VarChar(70)
+  thumbnailAltText     String?     @db.VarChar(255)
+  productImagesAltText String?     @db.VarChar(255)
   sections             Json[]      @default([])
   saleCounter          String?
   sizes                Json[]      @default([])
   filter               Json[]      @default([])
-  customUrl            String?
+  customUrl            String?     @unique @db.VarChar(255)
   shippingOptions      Json[]      @default([])
   categoryId           String      @db.Uuid
   subCategoryId        String      @db.Uuid
@@ -126,12 +125,15 @@ model Product {
 }
 
 model Review {
-  id        String   @id @default(uuid()) @db.Uuid
-  userName  String
-  userEmail String
-  review    String
-  stars     Int
-  productId String   @db.Uuid
-  product   Product  @relation(fields: [productId], references: [id], name: "ProductReviews", onDelete: Cascade)
-  createdAt DateTime @default(now())
+  id         String   @id @default(uuid()) @db.Uuid
+  userId     String?  @db.Uuid
+  user       User?    @relation(fields: [userId], references: [id])
+  productId  String   @db.Uuid
+  product    Product  @relation(fields: [productId], references: [id], name: "ProductReviews", onDelete: Cascade)
+  review     String   @db.Text()
+  stars      Int      @default(1)
+  isApproved Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  @@index([productId])
 }
