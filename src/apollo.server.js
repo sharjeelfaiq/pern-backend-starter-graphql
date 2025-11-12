@@ -1,5 +1,5 @@
-import { ApolloServer } from "@apollo/server";
 import depthLimit from "graphql-depth-limit";
+import { ApolloServer } from "@apollo/server";
 
 import { typeDefs, resolvers } from "#modules/index.js";
 
@@ -37,7 +37,7 @@ const requestLoggerPlugin = {
 export const apolloServer = new ApolloServer({
   typeDefs,
   resolvers,
-  introspection: process.env.NODE_ENV !== "production", // disable introspection in prod
+  introspection: process.env.NODE_ENV !== "production",
   allowBatchedHttpRequests: true,
   validationRules: [depthLimit(5)], // prevent very deep queries
   plugins: [requestLoggerPlugin],

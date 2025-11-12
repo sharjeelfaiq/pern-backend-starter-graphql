@@ -1,8 +1,8 @@
 import express from "express";
 
 import { logger, env } from "#config/index.js";
-import { setupMiddleware } from "#middleware/index.js";
 import { apolloServer } from "./apollo.server.js";
+import { setupMiddleware } from "#middleware/index.js";
 
 const { PORT, BACKEND_URL } = env;
 
